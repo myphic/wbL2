@@ -5,6 +5,8 @@ import "fmt"
 /*
 	Реализовать паттерн «строитель».
 	Используется для построения сложных объектов покомпонентно.
+	Плюсы:
+	Отделить детали реализации от клиентского кода
 */
 
 type ComputerB struct {
@@ -51,8 +53,50 @@ func (c *computerBuilder) Build() ComputerB {
 	}
 }
 
+//Laptop builder
+type laptopBuilder struct {
+	computerBuilder
+}
+
+func NewLaptopBuilder() ComputerBuilder {
+	return (&laptopBuilder{}).CPU("i3").Memory(4).HardDrive("HDD")
+}
+
+func (c *laptopBuilder) Build() ComputerB {
+	return ComputerB{CPU: c.cpu}
+}
+
+// /Laptop builder
+
+// Director
+
+type Director struct {
+	c ComputerBuilder
+}
+
+func NewDirector(c ComputerBuilder) *Director {
+	return &Director{
+		c: c,
+	}
+}
+
+func (d *Director) BuildComputer() ComputerB {
+	return d.c.Build()
+}
+
+func (d *Director) SetBuilder(c ComputerBuilder) {
+	d.c = c
+
+}
+
 func main() {
-	builder := NewComputerBuilder()
-	computer := builder.CPU("i5").Memory(8).HardDrive("SSD").Build()
-	fmt.Println(computer)
+	cBuilder := NewComputerBuilder()
+	cBuilder = cBuilder.CPU("i5").Memory(8).HardDrive("SSD")
+	director := NewDirector(cBuilder)
+	computer := director.BuildComputer()
+
+	laptopBuilder := NewLaptopBuilder()
+	director.SetBuilder(laptopBuilder)
+	laptop := director.BuildComputer()
+	fmt.Println(computer, laptop)
 }
