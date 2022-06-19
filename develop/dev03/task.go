@@ -1,5 +1,13 @@
 package main
 
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+	"sort"
+)
+
 /*
 === Утилита sort ===
 
@@ -25,6 +33,35 @@ package main
 Программа должна проходить все тесты. Код должен проходить проверки go vet и golint.
 */
 
-func main() {
+func readFile(filename string) []string {
+	var result []string
+	f, err := os.Open(filename)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+
+	for scanner.Scan() {
+		result = append(result, scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return result
+}
+
+func sortStrings(str []string) {
+	sort.Strings(str)
+}
+
+func main() {
+	stringsFromFile := readFile("./develop/dev03/in.txt")
+	fmt.Println(stringsFromFile)
+	sortStrings(stringsFromFile)
+	fmt.Println(stringsFromFile)
 }
