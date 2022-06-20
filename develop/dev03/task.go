@@ -84,11 +84,11 @@ func sortNumeric(str []string) []string {
 	sort.Slice(str, func(i, j int) bool {
 		left, err := strconv.Atoi(str[i])
 		if err != nil {
-			log.Fatalf("Error with convert to int: from: %s to: %s", left, err)
+			log.Fatalf("Error with convert to int: from: %d to: %s", left, err)
 		}
 		right, err := strconv.Atoi(str[j])
 		if err != nil {
-			log.Fatalf("Error with convert to int: from: %s to: %s", right, err)
+			log.Fatalf("Error with convert to int: from: %d to: %s", right, err)
 		}
 		return left < right
 	})
@@ -101,6 +101,7 @@ func sortReverse(str []string) []string {
 	return str
 }
 
+//Удалить повторяющиеся строки (ключ -u)
 func sortWithoutDuplicates(str []string) []string {
 	keys := make(map[string]bool)
 	list := []string{}
@@ -114,8 +115,28 @@ func sortWithoutDuplicates(str []string) []string {
 	return list
 }
 
+func writeToFile(filename string, source []string) error {
+	result, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("can't creating file: %s", err)
+	}
+	defer result.Close()
+
+	for i := 0; i < len(source)-1; i++ {
+		_, err := result.WriteString(source[i] + "\n")
+		if err != nil {
+			return err
+		}
+	}
+	_, err = result.WriteString(source[len(source)-1])
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
-	stringsFromFile := readFile("./develop/dev03/in.txt")
+	stringsFromFile := readFile("in.txt")
 	k := flag.Int("k", 0, "sort by column")
 	n := flag.Bool("n", false, "numeric sort")
 	r := flag.Bool("r", false, "reverse sort")
@@ -125,15 +146,18 @@ func main() {
 	switch {
 	case *k != 0:
 		result = sortByColumn(stringsFromFile, *k, " ")
-	case *n != false:
+	case *n:
 		result = sortNumeric(stringsFromFile)
-	case *r != false:
+	case *r:
 		result = sortReverse(stringsFromFile)
-	case *u != false:
+	case *u:
 		result = sortWithoutDuplicates(stringsFromFile)
 	default:
 		result = sortStrings(stringsFromFile)
 	}
 
-	fmt.Println(result)
+	err := writeToFile("result.txt", result)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
