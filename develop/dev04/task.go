@@ -1,5 +1,11 @@
 package main
 
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
+
 /*
 === Поиск анаграмм по словарю ===
 
@@ -19,6 +25,76 @@ package main
 Программа должна проходить все тесты. Код должен проходить проверки go vet и golint.
 */
 
-func main() {
+func isAnagram(s1, s2 string) bool {
 
+	if len(s1) != len(s2) {
+		return false
+	}
+
+	hash := make(map[string]int)
+
+	for _, r := range s1 {
+		j := hash[string(r)]
+
+		if j == 0 {
+			hash[string(r)] = 1
+		} else {
+			hash[string(r)] = j + 1
+		}
+	}
+
+	for _, r := range s2 {
+		j := hash[string(r)]
+
+		if j == 0 {
+			hash[string(r)] = 1
+		} else {
+			hash[string(r)] = j + 1
+		}
+	}
+
+	isAnagram := true
+	for _, value := range hash {
+		if value%2 != 0 {
+			isAnagram = false
+			break
+		}
+
+	}
+
+	return isAnagram
+}
+
+func sliceToLower(s []string) {
+	for i, v := range s {
+		s[i] = strings.ToLower(v)
+	}
+}
+
+func sortAnagrams(m map[string][]string) {
+	for _, value := range m {
+		sort.Strings(value)
+	}
+}
+
+func getAnagrams(str []string) map[string][]string {
+	sliceToLower(str)
+	result := make(map[string][]string, len(str))
+	alreadyInResult := make(map[string]bool, len(str))
+	for i := 0; i < len(str)-1; i++ {
+		for j := 1; j < len(str); j++ {
+			if _, ok := alreadyInResult[str[i]]; !ok && i != j {
+				if isAnagram(str[i], str[j]) {
+					result[str[i]] = append(result[str[i]], str[j])
+					alreadyInResult[str[j]] = true
+				}
+			}
+		}
+	}
+	sortAnagrams(result)
+	return result
+}
+
+func main() {
+	fmt.Println(getAnagrams([]string{"пяТка", "ТЯПКА", "листок", "слиток", "столик", "тест", "пятак"}))
 }
