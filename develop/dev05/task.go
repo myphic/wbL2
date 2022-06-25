@@ -71,7 +71,7 @@ func main() {
 	filename := args[0]
 	pattern := args[1]
 	stringsFromFile := readFile(filename)
-	//result := make([]string, len(stringsFromFile))
+
 	bottom := 0
 	top := 0
 

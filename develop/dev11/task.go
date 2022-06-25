@@ -1,5 +1,12 @@
 package main
 
+import (
+	"eventAPI/internal/handlers"
+	"log"
+	"net/http"
+	"os"
+)
+
 /*
 === HTTP server ===
 
@@ -21,7 +28,13 @@ package main
 	3. В случае ошибки бизнес-логики сервер должен возвращать HTTP 503. В случае ошибки входных данных (невалидный int например) сервер должен возвращать HTTP 400. В случае остальных ошибок сервер должен возвращать HTTP 500. Web-сервер должен запускаться на порту указанном в конфиге и выводить в лог каждый обработанный запрос.
 	4. Код должен проходить проверки go vet и golint.
 */
-
+//SERVERPORT=2222 go run .
 func main() {
-
+	mux := http.NewServeMux()
+	server := handlers.NewTaskServer()
+	mux.HandleFunc("/create_event", server.CreateEvent)
+	mux.HandleFunc("/events_for_day", server.GetEventsForDay)
+	//mux.HandleFunc("/due/", server.dueHandler)
+	log.Println("Server listening on port: ", os.Getenv("SERVERPORT"))
+	log.Fatal(http.ListenAndServe("localhost:"+os.Getenv("SERVERPORT"), mux))
 }
