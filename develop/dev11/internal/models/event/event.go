@@ -45,7 +45,12 @@ func (store *EventStore) GetEventsForDay() []Event {
 
 	allTasks := make([]Event, 0, len(store.events))
 	for _, task := range store.events {
-		allTasks = append(allTasks, task)
+		currTime := time.Now()
+		duration, _ := time.ParseDuration("-24h")
+		before := currTime.Add(duration)
+		if task.Date.After(before) && task.Date.Before(currTime) {
+			allTasks = append(allTasks, task)
+		}
 	}
 	return allTasks
 }
