@@ -60,9 +60,45 @@ func (s *eventServer) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func (s *eventServer) GetEventsForDay(w http.ResponseWriter, req *http.Request) {
-	log.Printf("handling get all tasks at %s\n", req.URL.Path)
+	log.Printf("handling get all events at %s\n", req.URL.Path)
 
 	allTasks := s.store.GetEventsForDay()
+
+	js, err := json.Marshal(allTasks)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(js)
+	w.Header().Set("Content-Type", "application/json")
+	write, err := w.Write(js)
+	if err != nil {
+		log.Fatalln(write, err)
+	}
+}
+
+func (s *eventServer) GetEventsForWeek(w http.ResponseWriter, req *http.Request) {
+	log.Printf("handling get all events at %s\n", req.URL.Path)
+
+	allTasks := s.store.GetEventsForWeek()
+
+	js, err := json.Marshal(allTasks)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(js)
+	w.Header().Set("Content-Type", "application/json")
+	write, err := w.Write(js)
+	if err != nil {
+		log.Fatalln(write, err)
+	}
+}
+
+func (s *eventServer) GetEventsForMonth(w http.ResponseWriter, req *http.Request) {
+	log.Printf("handling get all events at %s\n", req.URL.Path)
+
+	allTasks := s.store.GetEventsForMonth()
 
 	js, err := json.Marshal(allTasks)
 	if err != nil {

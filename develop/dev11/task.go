@@ -34,7 +34,8 @@ func main() {
 	server := handlers.NewTaskServer()
 	mux.HandleFunc("/create_event", server.CreateEvent)
 	mux.HandleFunc("/events_for_day", server.GetEventsForDay)
-	//mux.HandleFunc("/due/", server.dueHandler)
+	mux.HandleFunc("/events_for_week", server.GetEventsForWeek)
+	mux.HandleFunc("/events_for_month", server.GetEventsForMonth)
 	log.Println("Server listening on port: ", os.Getenv("SERVERPORT"))
 	log.Fatal(http.ListenAndServe("localhost:"+os.Getenv("SERVERPORT"), mux))
 }

@@ -43,14 +43,35 @@ func (store *EventStore) GetEventsForDay() []Event {
 	store.Lock()
 	defer store.Unlock()
 
-	allTasks := make([]Event, 0, len(store.events))
+	events := getEvents(store, "-24h")
+	return events
+}
+
+func (store *EventStore) GetEventsForWeek() []Event {
+	store.Lock()
+	defer store.Unlock()
+
+	events := getEvents(store, "-168h")
+	return events
+}
+
+func (store *EventStore) GetEventsForMonth() []Event {
+	store.Lock()
+	defer store.Unlock()
+
+	events := getEvents(store, "-744h")
+	return events
+}
+
+func getEvents(store *EventStore, t string) []Event {
+	events := make([]Event, 0, len(store.events))
 	for _, task := range store.events {
 		currTime := time.Now()
-		duration, _ := time.ParseDuration("-24h")
+		duration, _ := time.ParseDuration(t)
 		before := currTime.Add(duration)
 		if task.Date.After(before) && task.Date.Before(currTime) {
-			allTasks = append(allTasks, task)
+			events = append(events, task)
 		}
 	}
-	return allTasks
+	return events
 }
