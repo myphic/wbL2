@@ -39,26 +39,39 @@ func (store *EventStore) CreateEvent(description string, date time.Time) int {
 	return store.id
 }
 
-func (store *EventStore) GetEventsForDay() []Event {
+func (store *EventStore) UpdateEvent(id int, description string, date time.Time) int {
 	store.Lock()
 	defer store.Unlock()
 
+	event := Event{
+		Id:          id,
+		Description: description,
+		Date:        date,
+	}
+
+	store.events[id] = event
+
+	return store.id
+}
+
+func (store *EventStore) DeleteEvent(id int) int {
+	store.Lock()
+	defer store.Unlock()
+	delete(store.events, id)
+	return store.id
+}
+
+func (store *EventStore) GetEventsForDay() []Event {
 	events := getEvents(store, "-24h")
 	return events
 }
 
 func (store *EventStore) GetEventsForWeek() []Event {
-	store.Lock()
-	defer store.Unlock()
-
 	events := getEvents(store, "-168h")
 	return events
 }
 
 func (store *EventStore) GetEventsForMonth() []Event {
-	store.Lock()
-	defer store.Unlock()
-
 	events := getEvents(store, "-744h")
 	return events
 }

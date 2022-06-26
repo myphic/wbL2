@@ -32,10 +32,12 @@ import (
 func main() {
 	mux := http.NewServeMux()
 	server := handlers.NewTaskServer()
-	mux.HandleFunc("/create_event", server.CreateEvent)
-	mux.HandleFunc("/events_for_day", server.GetEventsForDay)
-	mux.HandleFunc("/events_for_week", server.GetEventsForWeek)
-	mux.HandleFunc("/events_for_month", server.GetEventsForMonth)
+	mux.HandleFunc("/create_event", server.CreateEvent)           //Post
+	mux.HandleFunc("/update_event", server.UpdateEvent)           //Post
+	mux.HandleFunc("/delete_event", server.DeleteEvent)           //Delete
+	mux.HandleFunc("/events_for_day", server.GetEventsForDay)     //Get
+	mux.HandleFunc("/events_for_week", server.GetEventsForWeek)   //Get
+	mux.HandleFunc("/events_for_month", server.GetEventsForMonth) //Get
 	log.Println("Server listening on port: ", os.Getenv("SERVERPORT"))
 	log.Fatal(http.ListenAndServe("localhost:"+os.Getenv("SERVERPORT"), mux))
 }
