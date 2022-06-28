@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
 )
@@ -26,6 +27,9 @@ func main() {
 			return
 		}
 		fmt.Print("Server: ", message)
-		conn.Write([]byte("msg from socket " + message + "\n"))
+		_, err = conn.Write([]byte("msg from socket " + message + "\n"))
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
