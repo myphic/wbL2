@@ -24,32 +24,7 @@ func main() {
 		log.Fatalf("Error with getting site")
 	}
 	s := writeFile("result.html", resp)
-	doc, err := html.Parse(strings.NewReader(s))
-	if err != nil {
-		// ...
-	}
-	var f func(*html.Node)
-	f = func(n *html.Node) {
-		if n.Type == html.ElementNode && n.Data == "img" {
-			for _, val := range n.Attr {
-				if val.Key == "src" || val.Key == "data-src" {
-					resp, err := http.Get(os.Args[1] + val.Val)
-					splitUrl := strings.Split(val.Val, "/")
-
-					defer resp.Body.Close()
-					if err != nil {
-						log.Fatalf("Error with getting site")
-					}
-
-					writeFile("assets/images/"+splitUrl[len(splitUrl)-1], resp)
-				}
-			}
-		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			f(c)
-		}
-	}
-	f(doc)
+	parseFile(s)
 }
 
 func writeFile(filename string, m *http.Response) string {
@@ -66,4 +41,42 @@ func writeFile(filename string, m *http.Response) string {
 	result.WriteString(string(body))
 	log.Println("File created:", filename)
 	return string(body)
+}
+
+func parseFile(s string) {
+	doc, err := html.Parse(strings.NewReader(s))
+	if err != nil {
+		log.Println("Error with parse: ", err)
+	}
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		for _, val := range n.Attr {
+			if n.Type == html.ElementNode && n.Data == "img" {
+				if val.Key == "src" || val.Key == "data-src" {
+					nodeHandler(val, "images")
+				}
+			}
+			if n.Type == html.ElementNode && n.Data == "link" {
+				if val.Key == "href" {
+					nodeHandler(val, "css")
+				}
+			}
+		}
+
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+}
+
+func nodeHandler(attr html.Attribute, folder string) {
+	resp, err := http.Get(os.Args[1] + attr.Val)
+	splitUrl := strings.Split(attr.Val, "/")
+
+	defer resp.Body.Close()
+	if err != nil {
+		log.Fatalf("Error with getting site")
+	}
+	writeFile("assets/"+folder+"/"+splitUrl[len(splitUrl)-1], resp)
 }
