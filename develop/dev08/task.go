@@ -39,12 +39,9 @@ func main() {
 func execInput(input string) error {
 	input = strings.TrimSuffix(input, "\n")
 
-	args := strings.Split(input, " ")
-
+	args := strings.Fields(input)
 	switch args[0] {
-	case "cd":
-		return os.Chdir(args[1])
-	case "exit":
+	case ":wq":
 		os.Exit(0)
 	}
 	cmd := exec.Command(args[0], args[1:]...)
