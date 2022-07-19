@@ -41,6 +41,7 @@ fmt.Printf(“fone after %v”, time.Since(start))
 func main() {
 	var or func(channels ...<-chan interface{}) <-chan interface{}
 	or = func(channels ...<-chan interface{}) <-chan interface{} {
+		//Критерии завершения функции
 		switch len(channels) {
 		case 0:
 			return nil
@@ -67,7 +68,7 @@ func main() {
 		}()
 		return result
 	}
-
+	//Создаем канал, который закроется после времени after
 	sig := func(after time.Duration) <-chan interface{} {
 		c := make(chan interface{})
 		go func() {
@@ -76,7 +77,7 @@ func main() {
 		}()
 		return c
 	}
-
+	//отслеживание блокировки канала
 	start := time.Now()
 	<-or(
 		sig(2*time.Hour),

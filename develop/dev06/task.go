@@ -64,7 +64,7 @@ func fieldsKeyHandler(str []string, f int, delimiter string, s bool) {
 
 func main() {
 	f := flag.Int("f", 0, "fields")
-	d := flag.String("d", "\t", "delimeter")
+	d := flag.String("d", "\t", "delimiter")
 	s := flag.Bool("s", false, "separated")
 	flag.Parse()
 	stringsFromFile := readFile("test.txt")
