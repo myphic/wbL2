@@ -25,58 +25,56 @@ import (
 Программа должна проходить все тесты. Код должен проходить проверки go vet и golint.
 */
 
+/*
+	Фукнция проверки строк на анаграммы
+	Алгоритм:
+	1. Пройтись по первой строке, увеличить количество встречаемости символов
+	2. Пройтись по второй строке, уменьшить количество встречаемости символов
+	3. Пройтись по первой строке, если какой-то символ не равен 0, то вернуть false
+	4. Вернуть true
+*/
 func isAnagram(s1, s2 string) bool {
+	lenS := len(s1)
+	lenT := len(s2)
 
-	if len(s1) != len(s2) {
+	if lenS != lenT {
 		return false
 	}
 
-	hash := make(map[string]int)
+	anagramMap := make(map[string]int)
 
-	for _, r := range s1 {
-		j := hash[string(r)]
+	for i := 0; i < lenS; i++ {
+		anagramMap[string(s1[i])]++
+	}
 
-		if j == 0 {
-			hash[string(r)] = 1
-		} else {
-			hash[string(r)] = j + 1
+	for i := 0; i < lenT; i++ {
+		anagramMap[string(s2[i])]--
+	}
+
+	for i := 0; i < lenS; i++ {
+		if anagramMap[string(s1[i])] != 0 {
+			return false
 		}
 	}
 
-	for _, r := range s2 {
-		j := hash[string(r)]
-
-		if j == 0 {
-			hash[string(r)] = 1
-		} else {
-			hash[string(r)] = j + 1
-		}
-	}
-
-	isAnagram := true
-	for _, value := range hash {
-		if value%2 != 0 {
-			isAnagram = false
-			break
-		}
-
-	}
-
-	return isAnagram
+	return true
 }
 
+//Приведение слов к нижнему регистру
 func sliceToLower(s []string) {
 	for i, v := range s {
 		s[i] = strings.ToLower(v)
 	}
 }
 
+//Сортировка анаграмм
 func sortAnagrams(m map[string][]string) {
 	for _, value := range m {
 		sort.Strings(value)
 	}
 }
 
+//Функция получения анаграмм
 func getAnagrams(str []string) map[string][]string {
 	sliceToLower(str)
 	result := make(map[string][]string, len(str))

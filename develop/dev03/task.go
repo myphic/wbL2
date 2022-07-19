@@ -64,11 +64,11 @@ func sortStrings(str []string) []string {
 	return str
 }
 
-//Сортировка по столбку (ключ -k)
-func sortByColumn(str []string, k int, delimeter string) []string {
+//Сортировка по столбцу (ключ -k)
+func sortByColumn(str []string, k int, delimiter string) []string {
 	sort.Slice(str, func(i, j int) bool {
-		left := strings.Split(str[i], delimeter)
-		right := strings.Split(str[j], delimeter)
+		left := strings.Split(str[i], delimiter)
+		right := strings.Split(str[j], delimiter)
 		if len(left) < k || len(right) < k {
 			log.Fatalln("Incorrect flag -k (k>count of column)")
 			return false

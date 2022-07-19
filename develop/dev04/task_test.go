@@ -10,7 +10,7 @@ type Case struct {
 	equal map[string][]string
 }
 
-func TestSort(t *testing.T) {
+func TestAnagrams(t *testing.T) {
 	testCases := []Case{
 		{
 			str:   []string{"пяТка", "ТЯПКА", "321", "22", "столик", "тест", "пятак"},
